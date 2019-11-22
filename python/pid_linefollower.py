@@ -9,7 +9,7 @@ from pybricks.tools import print, wait, StopWatch
 from pybricks.robotics import DriveBase
 
 kp = 1
-ki = 0
+ki = 1
 kd = 1
 
 target_brightness = 40
@@ -23,24 +23,32 @@ turns = [[20,-30]]
 left_motor = Motor(Port.B)
 right_motor = Motor(Port.C)
 gyro = GyroSensor(Port.S2)
+left_color_sensor = ColorSensor(Port.S1)
 wheel_size = 56
 axle_distance = 102
 base = DriveBase(left_motor,right_motor,wheel_size,axle_distance)
 watch = StopWatch()
-
-left_color_sensor = ColorSensor(Port.S1)
+leave_base = True
 
 brick.sound.beep()
 
-while watch.time() < 5000:
-    reflection_reading = left_color_sensor.reflection()
-    error = target_brightness - reflection_reading
-    pid = kp * error + ki * total_error + kd * last_error
-    print("reflection:",reflection_reading,"\t\terror:",error)
-    base.drive(100,pid*-1)
+gyro.reset_angle(0)
+if abs(gyro.speed()) > 0:
+    leave_base = False
 
-    total_error += error
-    last_error = error
+if leave_base:
+    while watch.time() < 5000:
+        #the steering
+        reflection_reading = left_color_sensor.reflection()
+        error = target_brightness - reflection_reading
+        pid = kp * error + ki * total_error + kd * last_error
+        print("reflection:",reflection_reading,"\t\terror:",error)
+        base.drive(100,pid*-1)
 
-    if reflection_reading == turns[0][1]:
-        base.drive(100,turns[0][1])
+        #set pid for next time
+        total_error += error
+        last_error = error
+
+        #turning
+        if reflection_reading == turns[0][1]:
+            base.drive(100,turns[0][1])

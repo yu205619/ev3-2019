@@ -16,9 +16,9 @@ target_brightness = 40
 
 total_error = 0
 last_error = 0
-turn_count = 0
 #turns = [target_brightness,turn_degrees(clockwise)]
-turns = [[20,-30]]
+turns = [[70,30],[10,-30],[10,-30]]
+turn_brightness_variation = 5
 
 left_motor = Motor(Port.B)
 right_motor = Motor(Port.C)
@@ -50,5 +50,6 @@ if leave_base:
         last_error = error
 
         #turning
-        if reflection_reading == turns[0][1]:
+        if reflection_reading >= turns[0][1] - turn_brightness_variation and reflection_reading <= turns[0][1] + turn_brightness_variation:
             base.drive(100,turns[0][1])
+            turns.pop(0)

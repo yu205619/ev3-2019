@@ -27,35 +27,24 @@ class LineFollower:
         self.base = DriveBase(Motor(left_motor),Motor(right_motor),wheel_size,axle_distance)
         self.gyro_sensor = GyroSensor(gyro_sensor)
     
-    def line_follow_align_left(self):
-        reflection_reading = self.left_color_sensor.reflection()
+    def line_follow_align_edge(color_sensor,edge,self):
+        reflection_reading = color_sensor.reflection()
         self.error = self.target_brightness - reflection_reading
         pid = self.kp * self.error + self.ki * self.total_error + self.kd * self.last_error
         print(str.ljust("reflection: "+str(reflection_reading),20),str.ljust("error: "+str(error),20),str.ljust("pid: "+str(pid),20))
-        base.drive(100,pid*-1)
-
-        #set pid for next time
-        self.total_error += self.error
-        self.last_error = self.error
-    
-    def line_follow_align_right(self):
-        reflection_reading = self.left_color_sensor.reflection()
-        self.error = self.target_brightness - reflection_reading
-        pid = self.kp * self.error + self.ki * self.total_error + self.kd * self.last_error
-        print(str.ljust("reflection: "+str(reflection_reading),20),str.ljust("error: "+str(error),20),str.ljust("pid: "+str(pid),20))
-        base.drive(100,pid*-1)
+        base.drive(100,pid*-1 if edge == "left" else pid if edge == "right" else 0)
 
         #set pid for next time
         self.total_error += self.error
         self.last_error = self.error
 
-    def drive_until_turn(self):
+    def drive_until_turn(turn,self):
         pass
 
-    def drive_until_time(self):
+    def drive_until_time(time,self):
         pass
+
+    def drive_until_rotations(rotation,self):
 
     def turn(self):
         pass
-
-    def 

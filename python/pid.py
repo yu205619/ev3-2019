@@ -17,14 +17,45 @@ class LineFollower:
         self.target_brightness = target_brightness
         self.turns = turns
         self.turn_brightness_variation = turn_brightness_variation
-    
-    #Port.B,Port.C,56,102
-    def motor_init(left_motor,right_motor,wheel_size,axle_distance,self)
-        self.base = DriveBase(Motor(left_motor),Motor(right_motor),wheel_size,axle_distance)
 
-    #
-    def sensor_init(left_color_sensor = None,right_color_sensor = None,gyro_sensor = None,middle_color_sensor = None)
-        self.left_color_sensor = ColorSensor(left_color_sensor)
-        self.right_color_sensor = ColorSensor(right_color_sensor)
-        self.middle_color_sensor = ColorSensor(middle_color_sensor)
+        self.error = 0
+        self.total_error = 0
+        self.last_error = 0
+    
+    #Port.B,Port.C,56,102,Port.S2
+    def port_init(left_motor,right_motor,wheel_size,axle_distance,gyro_sensor,self):
+        self.base = DriveBase(Motor(left_motor),Motor(right_motor),wheel_size,axle_distance)
         self.gyro_sensor = GyroSensor(gyro_sensor)
+    
+    def line_follow_align_left(self):
+        reflection_reading = self.left_color_sensor.reflection()
+        self.error = self.target_brightness - reflection_reading
+        pid = self.kp * self.error + self.ki * self.total_error + self.kd * self.last_error
+        print(str.ljust("reflection: "+str(reflection_reading),20),str.ljust("error: "+str(error),20),str.ljust("pid: "+str(pid),20))
+        base.drive(100,pid*-1)
+
+        #set pid for next time
+        self.total_error += self.error
+        self.last_error = self.error
+    
+    def line_follow_align_right(self):
+        reflection_reading = self.left_color_sensor.reflection()
+        self.error = self.target_brightness - reflection_reading
+        pid = self.kp * self.error + self.ki * self.total_error + self.kd * self.last_error
+        print(str.ljust("reflection: "+str(reflection_reading),20),str.ljust("error: "+str(error),20),str.ljust("pid: "+str(pid),20))
+        base.drive(100,pid*-1)
+
+        #set pid for next time
+        self.total_error += self.error
+        self.last_error = self.error
+
+    def drive_until_turn(self):
+        pass
+
+    def drive_until_time(self):
+        pass
+
+    def turn(self):
+        pass
+
+    def 

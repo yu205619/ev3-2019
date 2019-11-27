@@ -42,7 +42,7 @@ if leave_base:
         reflection_reading = left_color_sensor.reflection()
         error = target_brightness - reflection_reading
         pid = kp * error + ki * total_error + kd * last_error
-        print("reflection:",reflection_reading,"\t\terror:",error)
+        print(str.ljust("reflection: "+str(reflection_reading),20),str.ljust("error: "+str(error),20))
         base.drive(100,pid*-1)
 
         #set pid for next time
@@ -53,3 +53,7 @@ if leave_base:
         if reflection_reading >= turns[0][1] - turn_brightness_variation and reflection_reading <= turns[0][1] + turn_brightness_variation:
             base.drive(100,turns[0][1])
             turns.pop(0)
+else:
+    display.image(ImageFile.DECLINE,alignment=Align.CENTER,coordinate=None,clear=True)
+    brick.light(Color.RED)
+    sound.file(SoundFile.ERROR,volume=100)

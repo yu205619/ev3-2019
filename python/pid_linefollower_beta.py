@@ -9,8 +9,8 @@ from pybricks.tools import print, wait, StopWatch
 from pybricks.robotics import DriveBase
 
 kp = 1
-ki = 1
-kd = 1
+ki = 0
+kd = 0
 
 target_brightness = 40
 
@@ -42,8 +42,8 @@ if leave_base:
         reflection_reading = left_color_sensor.reflection()
         error = target_brightness - reflection_reading
         pid = kp * error + ki * total_error + kd * last_error
-        print(str.ljust("reflection: "+str(reflection_reading),20),str.ljust("error: "+str(error),20))
-        base.drive(100,pid*-1)
+        #print(("reflection: "+str(reflection_reading)).ljust(20," "),("error: "+str(error)).ljust(20," "),("pid: "+str(pid)).ljust(20," "))
+        base.drive(180,pid*-1)
 
         #set pid for next time
         total_error += error
@@ -51,9 +51,9 @@ if leave_base:
 
         #turning
         if reflection_reading >= turns[0][1] - turn_brightness_variation and reflection_reading <= turns[0][1] + turn_brightness_variation:
-            base.drive(100,turns[0][1])
+            base.drive(180,turns[0][1])
+            brick.sound.file(SoundFile.T_REX_ROAR,volume=100)
             turns.pop(0)
 else:
-    display.image(ImageFile.DECLINE,alignment=Align.CENTER,coordinate=None,clear=True)
     brick.light(Color.RED)
-    sound.file(SoundFile.ERROR,volume=100)
+    brick.sound.file(SoundFile.ERROR_ALARM,volume=100)

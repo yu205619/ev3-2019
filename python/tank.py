@@ -1,27 +1,22 @@
 import util
 
-Class Tank:
-	def __init__(self,motor_left,motor_right,gyro):
-		self.motor_left = motor_left
-		self.motor_right = motor_right
+import pybricks.robotics
+
+class Tank(pybricks.robotics.DriveBase):
+	def __init__(self,gyro,left_motor,right_motor,wheel_diameter=56,axle_track=114):
+		super().__init__(left_motor,right_motor,wheel_diameter,axle_track)
 		self.gyro = gyro
-	def move(self,power):
-		self.motor_left.run(power)
-		self.motor_right.run(power)
-	def stop(self):
-		self.motor_left.stop()
-		self.motor_right.stop()
-	def spin(self,angle,power,gyro=self.gyro):
+	def spin(self,angle,power):
 		if angle == 0: return
 		# start spinning in direction and waiting for gyro
-		gyro.reset_angle()
+		self.gyro.reset_angle()
 		if deg < 0:
-			self.motor_left.run(-power)
-			self.motor_right.run(power)
-			wait_gyro(gyro,Comparator.LESS,angle)
+			self.left_motor.run(-power)
+			self.right_motor.run(power)
+			wait_gyro(self.gyro,Comparator.LESS,angle)
 			self.stop()
 		else:
-			self.motor_left.run(power)
-			self.motor_right.run(-power)
-			wait_gyro(gyro,Comparator.MORE,angle)
+			self.left_motor.run(power)
+			self.right_motor.run(-power)
+			wait_gyro(self.gyro,Comparator.MORE,angle)
 			self.stop()

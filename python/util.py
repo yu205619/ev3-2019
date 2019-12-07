@@ -1,10 +1,7 @@
-import enum
-
-@enum.unique
-class Comparator(Enum):
-	LESS = auto()
-	MORE = auto()
-	EQUAL = auto()
+class Comparator:
+	LESS = -1
+	MORE = 1
+	EQUAL = 0
 	def _lambda(comparator):
 		if comparator == self.LESS:
 			return lambda val, thr: val < thr
@@ -24,3 +21,4 @@ def wait_reflection(sensor,comparator,percent,interval=1):
 	while not test(sensor.reflection(),percent):
 		wait(interval)
 	return True
+

@@ -8,23 +8,30 @@ from pybricks.parameters import (Port, Stop, Direction, Button, Color,
 from pybricks.tools import print, wait, StopWatch
 from pybricks.robotics import DriveBase
 
-kp = 0.7 #error
-ki = 0 #last_error
-kd = 0 #total_error
+from tank import Tank
 
 #degrees per second?
-robot_speed = 100
+robot_speed = 150
+
+#kp = 0.02*robot_speed #error
+#ki = 0*robot_speed #last_error
+#kd = 0.01*robot_speed #total_error
+
+kp = 0.7
+ki = 0
+kd = 0.2
+
+print("robot_speed:",robot_speed)
+print("kp:",kp,"ki:",ki,"kd",kd)
 
 target_brightness = 40
 
 total_error = 0
 last_error = 0
-#turns = [target_brightness,turn_degrees(clockwise)]
-#turns = [[90,0],[10,-60]]
-turns = [0]
-turn_brightness_variation = 5
+#[degrees(clockwise),detect/turn,reset]
+turns = [[60,"detect",True],[-60,"detect",True],[-60,"detect",True],[60,"detect",True],[-60,"turn",True]]
+angle_error = 5
 
-anomaly_count = 0
 left_motor = Motor(Port.B)
 right_motor = Motor(Port.C)
 gyro = GyroSensor(Port.S4)
@@ -56,14 +63,11 @@ if leave_base:
         last_error = error
 
         #turning
-        #if reflection_reading >= turns[0][1] - turn_brightness_variation and reflection_reading <= turns[0][1] + turn_brightness_variation:
-        #    anomaly_count += 1
-        #    base.drive(180,turns[0][1])
-        #    if anomaly_count == 1:
-        #        base.drive(robot_speed,0)
-        #    print("turning turn",turns[0])
-        #    brick.sound.file(SoundFile.FANFARE,volume=30)
-        #    turns.pop(0)
+        if gyro.angle() > turns[0][0] - angle_error and gyro.angle() < turns[0][0] + angle_error:
+            print("Turning Turn:",turns[0])
+            if turns[0][1] == "turn":
+                run_angle
+            
 else:
     brick.light(Color.RED)
     brick.sound.file(SoundFile.ERROR,volume=100)

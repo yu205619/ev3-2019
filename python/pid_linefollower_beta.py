@@ -11,11 +11,7 @@ from pybricks.robotics import DriveBase
 from tank import Tank
 
 #degrees per second?
-robot_speed = 150
-
-#kp = 0.02*robot_speed #error
-#ki = 0*robot_speed #last_error
-#kd = 0.01*robot_speed #total_error
+robot_speed = 100
 
 kp = 0.7
 ki = 0
@@ -29,8 +25,8 @@ target_brightness = 40
 total_error = 0
 last_error = 0
 #[degrees(clockwise),detect/turn,reset]
-turns = [[60,"detect",True],[-60,"detect",True],[-60,"detect",True],[60,"detect",True],[-60,"turn",True]]
-angle_error = 5
+turns = [[30,False,"detect"],[0,False,"detect"],[-30,False,"detect"],[0,False,"detect"],[0,True,"turn",-300]]
+angle_error = 10
 
 left_motor = Motor(Port.B)
 right_motor = Motor(Port.C)
@@ -39,14 +35,17 @@ left_color_sensor = ColorSensor(Port.S2)
 wheel_size = 56
 axle_distance = 120
 base = DriveBase(left_motor,right_motor,wheel_size,axle_distance)
+tank = Tank(gyro,left_motor,right_motor,wheel_size,axle_distance)
 watch = StopWatch()
 leave_base = True
+turn = 0
 
 brick.sound.beep()
 
-# gyro.reset_angle(0)
-# if abs(gyro.speed()) > 0:
-#     leave_base = False
+gyro.reset_angle(0)
+if abs(gyro.speed()) > 0:
+    leave_base = False
+    print("Gyro Drifting")
 
 if leave_base:
     # while len(turns) > 0:
@@ -55,7 +54,7 @@ if leave_base:
         reflection_reading = left_color_sensor.reflection()
         error = target_brightness - reflection_reading
         pid = kp * error + ki * total_error + kd * last_error
-        print("reflection: "+str(round(reflection_reading,1)),"p: "+str(round(error*kp,1)),"i: "+str(round(total_error*ki,1)),"d: "+str(round(last_error*kd,1)),"pid: "+str(round(pid,1)))
+        print("reflection: "+str(round(reflection_reading,1)),"gyro: "+str(round(gyro.angle(),1)),"p: "+str(round(error*kp,1)),"i: "+str(round(total_error*ki,1)),"d: "+str(round(last_error*kd,1)),"pid: "+str(round(pid,1)))
         base.drive(robot_speed,pid*-1)
 
         #set pid for next time
@@ -63,10 +62,13 @@ if leave_base:
         last_error = error
 
         #turning
-        if gyro.angle() > turns[0][0] - angle_error and gyro.angle() < turns[0][0] + angle_error:
-            print("Turning Turn:",turns[0])
-            if turns[0][1] == "turn":
-                run_angle
+        if gyro.angle() > turns[turn][0] - angle_error and gyro.angle() < turns[turn][0] + angle_error:
+            print("\nTurning Turn:",turns[turn],", Turn Count:",turn,"\n")
+            if turns[turn][2] == "turn":
+                tank.spin(turns[turn][3],100)
+            if turns[turn][1]:
+                gyro.reset_angle(0)
+            turn += 1
             
 else:
     brick.light(Color.RED)

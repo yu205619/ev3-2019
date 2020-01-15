@@ -21,4 +21,7 @@ watch = StopWatch()
 
 tank = Tank(gyro,left_motor,right_motor)
 
+while True:
+    base.drive(100,100)
+
 tank.spin(360,100)

@@ -15,6 +15,7 @@ def wait_time(zeit):
 def cool_lights():
 	ev3brick.light(Color.RED)
 	time.sleep(1)
+	ev3brick.light(Color.BLACK)
 
 def move_tank(power,angle):
 	print("moving the tank at power {} and angle {}".format(power,angle))
@@ -27,8 +28,8 @@ def scream():
 
 # check this out
 runmenu = ButtonMenu()
-runmenu.set(Button.LEFT,wait_time,(10,))
-runmenu.set(Button.RIGHT,cool_lights,())
+runmenu.set(Button.LEFT,wait_time,(10,),"wait")
+runmenu.set(Button.RIGHT,cool_lights,(),"lights")
 runmenu.set(Button.UP,move_tank,(100,12))
-runmenu.set(Button.DOWN,scream)
+runmenu.set(Button.DOWN,scream,name="scream")
 runmenu.run()

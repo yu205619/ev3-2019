@@ -1,6 +1,6 @@
 #!/usr/bin/env pybricks-micropython
 
-import buttonmenu
+from buttonmenu import ButtonMenu
 
 import time
 
@@ -9,8 +9,8 @@ from pybricks.parameters import Color
 
 from pybricks import ev3brick
 
-def wait_time(time):
-	time.sleep(time)
+def wait_time(zeit):
+	time.sleep(zeit)
 
 def cool_lights():
 	ev3brick.light(Color.RED)
@@ -27,7 +27,8 @@ def scream():
 
 # check this out
 runmenu = ButtonMenu()
-runmenu.set(Button.LEFT,wait_time,(10))
+runmenu.set(Button.LEFT,wait_time,(10,))
 runmenu.set(Button.RIGHT,cool_lights,())
 runmenu.set(Button.UP,move_tank,(100,12))
 runmenu.set(Button.DOWN,scream)
+runmenu.run()
